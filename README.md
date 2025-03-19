@@ -17,6 +17,7 @@ Trading Exchange
 
 Для того чтобы активировать pre-commit необходимо ввести команду:
 
-    pre-commit 
+    pre-commit install -f
+    pre-commit install -f --hook-type pre-commit
     
     
