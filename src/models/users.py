@@ -7,4 +7,4 @@ class User(Table, tablename="user"):
     id = columns.UUID(primary_key=True, default=uuid.uuid4)
     email = columns.Varchar(unique=True)
     name = columns.Varchar()
-    password = columns.Secret(length=255)  # type: ignore
+    password = columns.Secret(length=255)  # type: ignore[no-untyped-call]

@@ -13,7 +13,7 @@ Trading Exchange
     для Windows - .\.venv\Scripts\activate
 Теперь можно запустить локальный сервер:
 
-    uvicorn main:app --reload
+    granian --interface asgi app:app 
 
 Для того чтобы активировать pre-commit необходимо ввести команду:
 
