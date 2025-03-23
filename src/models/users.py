@@ -1,10 +1,11 @@
 from piccolo.table import Table
-from piccolo import columns
+from piccolo.columns import Varchar, UUID
 import uuid
+from services.types import UserRole
 
 
 class User(Table, tablename="user"):
-    id = columns.UUID(primary_key=True, default=uuid.uuid4)
-    email = columns.Varchar(unique=True)
-    name = columns.Varchar()
-    password = columns.Secret(length=255)  # type: ignore[no-untyped-call]
+    id = UUID(primary_key=True, default=uuid.uuid4)
+    name = Varchar(length=255)
+    role = Varchar(length=50, choices=UserRole)
+    api_key = Varchar(length=255, unique=True)
