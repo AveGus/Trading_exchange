@@ -1,16 +1,25 @@
-from fastapi import HTTPException
 from uuid import uuid4
 from models import User
-from services.users import UserCreate
+from asyncpg.exceptions import UniqueViolationError
 
 
-async def register(user_data: UserCreate):
-    existing_user = await User.select().where(User.name == user_data.name).first()
-    if existing_user:
-        raise HTTPException(
-            status_code=400, detail="Пользователь с таким именем уже существует"
-        )
-    api_key = f"key-{uuid4()}"
-    new_user = User(name=user_data.name, role=user_data.role, api_key=api_key)
-    await new_user.save()
-    return new_user
+class UserAlreadyExistsError(Exception):
+    pass
+
+
+async def registration_new_user(name: str, *, role: str = "USER") -> User:
+    try:
+        if await User.select().where(User.name == name).first():
+            raise UserAlreadyExistsError("Пользователь уже существует")
+        user = User(name=name, role=role, api_key=f"key-{uuid4()}")
+        await user.save()
+        return user
+    except UniqueViolationError:
+        return UserAlreadyExistsError("Пользователь уже существует")
+    except Exception as e:
+        if "duplicate key" in str(e):
+            api_key = f"key-{uuid4()}"
+            user.api_key = api_key
+            await user.save()
+            return user
+        raise Exception(f"Ошибка сервера: {str(e)}")
