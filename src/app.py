@@ -1,13 +1,13 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
+from api.v1.auth import router as auth_router
+from services.di import get_current_user
 
 app = FastAPI()
 
-
-@app.get("/")
-async def root() -> dict[str, str]:
-    return {"message": "Hello World"}
+app.include_router(auth_router, prefix="/api/v1/public")
 
 
-@app.get("/hello/{name}")
-async def say_hello(name: str) -> dict[str, str]:
-    return {"message": f"Hello {name}"}
+# Добавлено для проверки
+@app.get("/protected-route")
+async def protected_route(user=Depends(get_current_user)):
+    return {"message": f"Добро пожаловать, {user.name}!"}
